@@ -3,9 +3,9 @@ package illusionCard
 import (
 	"bytes"
 	"errors"
-	"illusionCard/Base"
-	"illusionCard/Koikatsu"
-	"illusionCard/Tools"
+	"github.com/GenesisAN/illusionsCard/Base"
+	"github.com/GenesisAN/illusionsCard/Koikatsu"
+	"github.com/GenesisAN/illusionsCard/Tools"
 	"os"
 	"strings"
 )

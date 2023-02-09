@@ -6,8 +6,8 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
-	"illusionCard/Base"
-	"illusionCard/Tools"
+	"github.com/GenesisAN/illusionsCard/Base"
+	"github.com/GenesisAN/illusionsCard/Tools"
 	"sort"
 )
 

@@ -2,7 +2,7 @@ package Tools
 
 import (
 	"bytes"
-	"illusionCard/Base"
+	"github.com/GenesisAN/illusionsCard/Base"
 )
 
 func get_png(file []byte) int {

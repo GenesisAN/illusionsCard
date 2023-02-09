@@ -1,4 +1,4 @@
-module illusionCard
+module github.com/GenesisAN/illusionsCard
 
 go 1.20
 
