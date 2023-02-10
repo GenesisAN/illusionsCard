@@ -8,7 +8,7 @@ Supported games:
 
 - [x] Koikatsu 
 
-- [ ] Koikatsu Sunshine
+- [x] Koikatsu Sunshine
 
 Require:
 
