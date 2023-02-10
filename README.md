@@ -16,12 +16,18 @@ Require:
 github.com/tinylib/msgp
 ```
 
-
-
 ### Exampe:
 
+Install:
+
+```shell
+go get "github.com/GenesisAN/illusionsCard"
+```
+
+Use:
+
 ```go
-Koikatsu , err := illusionCard.ReadKK("./Card.png")
+Koikatsu , err := illusionsCard.ReadKK("./Card.png")
 if err != nil {
     return
 }
