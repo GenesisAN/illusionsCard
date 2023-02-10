@@ -4,10 +4,19 @@ var PngEndChunk = []byte{0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82}
 
 var PngStartChunk = []byte{0x89, 0x50, 0x4E, 0x47, 0x0D}
 
-var PluginGUID = "com.bepis.bepinex.sideloader"
+const PluginGUID = "com.bepis.bepinex.sideloader"
 
-var UARExtID = "com.bepis.sideloader.universalautoresolver"
+const UARExtID = "com.bepis.sideloader.universalautoresolver"
 
-var UARExtIDOld = "EC.Core.Sideloader.UniversalAutoResolver"
-var Parameter = "Parameter"
-var KKEx = "KKEx"
+const UARExtIDOld = "EC.Core.Sideloader.UniversalAutoResolver"
+const Parameter = "Parameter"
+const KKEx = "KKEx"
+
+const CT_KK = "【KoiKatuChara】"     // Koikatu
+const CT_AI = "【AIS_Chara】"        // AiSyoujyo
+const CT_EC = "【EroMakeChara】"     // EmotionCreators
+const CT_KKS = "【KoiKatuCharaSun】" // KoikatsuSunshine
+
+const CT_KKP = "【KoiKatuCharaS】"    // KoikatsuParty
+const CT_KKCSP = "【KoiKatuCharaSP】" // KoikatsuPartySpecialPatch
+const CT_KKC = "【KoiKatuClothes】"   // KoiKatuClothes

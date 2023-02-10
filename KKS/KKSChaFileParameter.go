@@ -1,7 +1,7 @@
-package Koikatsu
+package KKS
 
 //go:generate msgp
-type KKChaFileParameter struct {
+type KKSChaFileParameter struct {
 	Version          string      `msg:"version"`
 	Sex              int         `msg:"sex"`
 	ExType           int         `msg:"exType"`
@@ -24,6 +24,7 @@ type KKChaFileParameter struct {
 	Kindness         int         `msg:"kindness"`
 	ExtendedSaveData interface{} `msg:"ExtendedSaveData"`
 }
+
 type Awnser struct {
 	Animal           bool        `msg:"animal"`
 	Eat              bool        `msg:"eat"`
@@ -45,23 +46,28 @@ type Denial struct {
 	ExtendedSaveData interface{} `msg:"ExtendedSaveData"`
 }
 type Attribute struct {
-	Hinnyo           bool        `msg:"hinnyo"`
-	Harapeko         bool        `msg:"harapeko"`
-	Donkan           bool        `msg:"donkan"`
-	Choroi           bool        `msg:"choroi"`
+	Active           bool        `msg:"active"`
 	Bitch            bool        `msg:"bitch"`
-	Mutturi          bool        `msg:"mutturi"`
+	Choroi           bool        `msg:"choroi"`
 	Dokusyo          bool        `msg:"dokusyo"`
-	Ongaku           bool        `msg:"ongaku"`
-	Kappatu          bool        `msg:"kappatu"`
-	Ukemi            bool        `msg:"ukemi"`
 	Friendly         bool        `msg:"friendly"`
-	Kireizuki        bool        `msg:"kireizuki"`
-	Taida            bool        `msg:"taida"`
-	Sinsyutu         bool        `msg:"sinsyutu"`
+	Harapeko         bool        `msg:"harapeko"`
+	Hinnyo           bool        `msg:"hinnyo"`
 	Hitori           bool        `msg:"hitori"`
-	Undo             bool        `msg:"undo"`
-	Majime           bool        `msg:"majime"`
+	Info             bool        `msg:"info"`
+	Kireizuki        bool        `msg:"kireizuki"`
 	LikeGirls        bool        `msg:"likeGirls"`
+	Lonely           bool        `msg:"lonely"`
+	Love             bool        `msg:"love"`
+	Majime           bool        `msg:"majime"`
+	Mutturi          bool        `msg:"mutturi"`
+	Nakama           bool        `msg:"nakama"`
+	Nonbiri          bool        `msg:"nonbiri"`
+	Okute            bool        `msg:"okute"`
+	Ongaku           bool        `msg:"ongaku"`
+	Sinsyutu         bool        `msg:"sinsyutu"`
+	Talk             bool        `msg:"talk"`
+	Ukemi            bool        `msg:"ukemi"`
+	Undo             bool        `msg:"undo"`
 	ExtendedSaveData interface{} `msg:"ExtendedSaveData"`
 }

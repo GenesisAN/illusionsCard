@@ -1,4 +1,4 @@
-package Koikatsu
+package KK
 
 //go:generate msgp
 type BlockHeaderListInfo struct {

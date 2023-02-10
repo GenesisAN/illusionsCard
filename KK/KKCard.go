@@ -1,22 +1,21 @@
-// Package Koikatsu 用于解析Koikatsu的角色卡数据
-package Koikatsu
+// Package KK 用于解析Koikatsu的角色卡数据
+package KK
 
 import (
-	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"github.com/GenesisAN/illusionsCard/Base"
-	"github.com/GenesisAN/illusionsCard/Tools"
+	util "github.com/GenesisAN/illusionsCard/util"
 	"sort"
 )
 
-type KoiCard struct {
+type KKCard struct {
 	*Base.Card
 	CharParmeter *KKChaFileParameter
 }
 
-func (card *KoiCard) KKChaFileParameterEx(cfp *KKChaFileParameter) {
+func (card *KKCard) KKChaFileParameterEx(cfp *KKChaFileParameter) {
 	card.CharParmeter = cfp
 	card.CharInfo = &Base.ChaFileParameterEx{}
 	card.CharInfo.Lastname = cfp.Lastname
@@ -25,37 +24,29 @@ func (card *KoiCard) KKChaFileParameterEx(cfp *KKChaFileParameter) {
 	card.CharInfo.Nickname = cfp.Nickname
 }
 
-func ParseKoiChara(buff *bytes.Buffer) (KoiCard, error) {
-	kc := KoiCard{&Base.Card{}, &KKChaFileParameter{}}
-
-	versionlen, err := Tools.BufRead(buff, 1, "BufRead Fail:Version len")
+func ParseKKChara(pb *util.PngBuff) (KKCard, error) {
+	kc := KKCard{&Base.Card{}, &KKChaFileParameter{}}
+	Version, err := pb.StringRead()
 	if err != nil {
 		return kc, err
 	}
-
-	_, err = Tools.BufRead(buff, int(versionlen[0]), "BufRead Fail:Version")
+	kc.LoadVersion = Version
+	flbui32, err := pb.UInt32Read()
 	if err != nil {
 		return kc, err
 	}
-
-	FLBuf, err := Tools.BufRead(buff, 4, "BufRead Fail:Face img len")
+	png, err := pb.BuffRead(int(flbui32), "BuffRead Fail:Face img")
 	if err != nil {
 		return kc, err
 	}
-
-	faceLength := binary.LittleEndian.Uint32(FLBuf)
-	_, err = Tools.BufRead(buff, int(faceLength), "BufRead Fail:Face img")
-	if err != nil {
-		return kc, err
-	}
-
-	countBuf, err := Tools.BufRead(buff, 4, "BufRead Fail:Card BlockHeader len")
+	pb.Png2 = &png
+	countBuf, err := pb.BuffRead(4, "BuffRead Fail:Card BlockHeader len")
 	if err != nil {
 		return kc, err
 	}
 
 	var count = binary.LittleEndian.Uint32(countBuf)
-	bhbytes, err := Tools.BufRead(buff, int(count), "BufRead Fail:Card BlockHeader")
+	bhbytes, err := pb.BuffRead(int(count), "BuffRead Fail:Card BlockHeader")
 	if err != nil {
 		return kc, err
 	}
@@ -69,20 +60,16 @@ func ParseKoiChara(buff *bytes.Buffer) (KoiCard, error) {
 	sort.SliceStable(bhls.LstInfo, func(i, j int) bool {
 		return bhls.LstInfo[i].Pos < bhls.LstInfo[j].Pos
 	})
-
-	buff.Next(8)
+	pb.B.Next(8)
 	bhmap := make(map[string]*BlockHeader)
 	for _, bh := range bhls.LstInfo {
-		cBuf, err := Tools.BufRead(buff, int(bh.Size), "BufRead Fail:"+bh.Name)
+		cBuf, err := pb.BuffRead(int(bh.Size), "BuffRead Fail:"+bh.Name)
 		if err != nil {
 			return kc, err
 		}
 		bh.Data = cBuf
-		//encodedString := hex.EncodeToString(cBuf)
-		//os.WriteFile(fmt.Sprintf("%s-hex.txt", bh.Name), []byte(encodedString), 0777)
 		bhmap[bh.Name] = bh
 	}
-	//var parameterBytes, extDataByte []byte
 	//遍历 头部信息，获取Parameter位置
 	par, ok := bhmap["Parameter"]
 	if ok {
@@ -128,10 +115,12 @@ func ParseKoiChara(buff *bytes.Buffer) (KoiCard, error) {
 		exDataEx[dex.Name] = &dex
 	}
 	kc.ExtendedList = exDataEx
+	kc.Image1 = pb.Png1
+	kc.Image2 = pb.Png2
 	return kc, nil
 }
 
-func (kc *KoiCard) PrintCardInfo() {
+func (kc *KKCard) PrintCardInfo() {
 	fmt.Println("Require Plugin:")
 	for _, ex := range kc.ExtendedList {
 		fmt.Printf("[Plugin]%s(Ver:%d)\n", ex.Name, ex.Version)

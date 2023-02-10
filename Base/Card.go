@@ -5,7 +5,8 @@ type Card struct {
 	Extended     map[string]*PluginData //
 	ExtendedList map[string]*PluginDataEx
 	CharInfo     *ChaFileParameterEx
-	Image        []byte
+	Image1       *[]byte
+	Image2       *[]byte
 	CardType     string
 	LoadVersion  string
 	Path         string

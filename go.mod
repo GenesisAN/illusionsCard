@@ -1,6 +1,6 @@
 module github.com/GenesisAN/illusionsCard
 
-go 1.20
+go 1.19
 
 require github.com/tinylib/msgp v1.1.8
 
