@@ -70,6 +70,7 @@ func PngRead(path string) (*PngBuff, error) {
 }
 
 func (pb *PngBuff) StringRead() (string, error) {
+	// Buffer中读取string的长度但这并非C#标准实现,具体参考: https://github.com/dotnet/runtime/blob/8a46f0777ef975bb3d39cfb0b477c8e5c2d02b9a/src/libraries/System.Private.CoreLib/src/System/IO/BinaryReader.cs#L544
 	types, err := pb.B.ReadByte()
 	if err != nil {
 		return "", errors.New("StringRead fail:unknown string len")
