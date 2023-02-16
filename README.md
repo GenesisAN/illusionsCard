@@ -36,7 +36,7 @@ import(
 Use:
 
 ```go
-pgb, err := ic.CardTypeRead(cardPath + cardName)
+pgb, err := ic.CardTypeRead("./Card.png")
 if err != nil {
     return ser.Err(ser.CodeCardSaveFail, "图片游戏类型读取失败", jpgseaveerr)
 }
