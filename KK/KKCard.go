@@ -20,8 +20,9 @@ func (card *KKCard) KKChaFileParameterEx(cfp *KKChaFileParameter) {
 	card.CharInfo = &Base.ChaFileParameterEx{}
 	card.CharInfo.Lastname = cfp.Lastname
 	card.CharInfo.Firstname = cfp.Firstname
-	card.CharInfo.Version = cfp.Version
 	card.CharInfo.Nickname = cfp.Nickname
+	card.CharInfo.Version = cfp.Version
+	card.CharInfo.Sex = cfp.Sex
 }
 
 func ParseKKChara(pb *util.PngBuff) (KKCard, error) {

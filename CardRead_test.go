@@ -11,24 +11,35 @@ func TestReadKK(t *testing.T) {
 	files := GetAllFiles("./KKTest/", ".png")
 	for _, v := range files {
 		gtp, err := CardTypeRead(v)
+		if err != nil {
+			t.Error(err)
+		}
 		kk, err := ReadKK(gtp)
 		if err != nil {
 			t.Error(err)
 		}
+
 		println(kk.CharParmeter.Nickname)
 	}
 }
 
 // KKS测试用例，需在根目录创建KKTest文件夹，并在里面放置卡片文件
 func TestReadKKS(t *testing.T) {
-	files := GetAllFiles("./KKSTest/", ".png")
+	files := GetAllFiles("./KKTest/", ".png")
 	for _, v := range files {
 		gtp, err := CardTypeRead(v)
+		if err != nil {
+			t.Error(err)
+		}
 		kks, err := ReadKKS(gtp)
 		if err != nil {
 			t.Error(err)
 		}
-		println(kks.CharParmeter.Nickname)
+		pps, errs := kks.ToJson()
+		if errs != nil {
+			t.Error(err)
+		}
+		println(pps)
 	}
 
 }
