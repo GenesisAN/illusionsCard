@@ -10,7 +10,8 @@ import (
 func TestReadKK(t *testing.T) {
 	files := GetAllFiles("./KKTest/", ".png")
 	for _, v := range files {
-		kk, err := ReadKK(v)
+		gtp, err := CardTypeRead(v)
+		kk, err := ReadKK(gtp)
 		if err != nil {
 			t.Error(err)
 		}
@@ -22,7 +23,8 @@ func TestReadKK(t *testing.T) {
 func TestReadKKS(t *testing.T) {
 	files := GetAllFiles("./KKSTest/", ".png")
 	for _, v := range files {
-		kks, err := ReadKKS(v)
+		gtp, err := CardTypeRead(v)
+		kks, err := ReadKKS(gtp)
 		if err != nil {
 			t.Error(err)
 		}
