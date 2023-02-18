@@ -27,39 +27,31 @@ func (pb *PngBuff) BuffRead(n int, errMsg string) ([]byte, error) {
 	}
 	return pb.B.Next(n), nil
 }
-func PngRead(path string) (*PngBuff, error) {
+func PngBytesRead(f []byte) (*PngBuff, error) {
 	var pb PngBuff
-	path = strings.Replace(path, "\\", "/", -1)
-	//提取文件名
-	//读取图片
-	f, err := os.ReadFile(path)
-	if err != nil {
-		return &pb, err
-	}
 	pb.B = bytes.NewBuffer(f)
-
 	//value := get_png(f)
 	//切割图片
 	pngend := bytes.Index(f, Base.PngEndChunk) + len(Base.PngEndChunk)
 	if pngend == -1 {
-		return &pb, errors.New("PngRead fail:not found PngEndChunk")
+		return nil, errors.New("PngRead fail:not found PngEndChunk")
 	}
 	png := pb.B.Next(pngend)
 	pb.Png1 = &png
 	//os.WriteFile("Out.png", outpng, 0776)
 	fb, err := pb.B.ReadByte()
 	if err != nil {
-		return &pb, errors.New("PngRead fail:first byte not found")
+		return nil, errors.New("PngRead fail:first byte not found")
 	}
 	if fb == 0x7 {
 		_, err = pb.BuffRead(64, "PngRead fail:0x7 BuffRead fail")
 		if err != nil {
-			return &pb, err
+			return nil, err
 		}
 	} else if fb == 0x64 {
 		_, err = pb.BuffRead(3, "PngRead fail:0x64 BuffRead fail")
 		if err != nil {
-			return &pb, err
+			return nil, err
 		}
 	}
 	pb.Type, err = pb.StringRead()
@@ -67,6 +59,17 @@ func PngRead(path string) (*PngBuff, error) {
 		return &pb, errors.New("PngRead fail:card type string")
 	}
 	return &pb, err
+}
+
+func PngRead(path string) (*PngBuff, error) {
+	path = strings.Replace(path, "\\", "/", -1)
+	//提取文件名
+	//读取图片
+	f, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	return PngBytesRead(f)
 }
 
 func (pb *PngBuff) StringRead() (string, error) {
