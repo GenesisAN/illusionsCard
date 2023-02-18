@@ -26,7 +26,7 @@ func (c *KKSCard) KKChaFileParameterEx(cfp *KKSChaFileParameter) {
 }
 
 func ParseKKSChara(pb *util.PngBuff) (KKSCard, error) {
-	kc := KKSCard{&Base.Card{}, &KKSChaFileParameter{}}
+	kc := KKSCard{&Base.Card{CardType: pb.Type}, &KKSChaFileParameter{}}
 	Version, err := pb.StringRead()
 	if err != nil {
 		return kc, err
