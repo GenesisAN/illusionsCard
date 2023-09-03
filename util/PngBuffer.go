@@ -69,7 +69,12 @@ func PngRead(path string) (*PngBuff, error) {
 	if err != nil {
 		return nil, err
 	}
-	return PngBytesRead(f)
+	pb, err := PngBytesRead(f)
+	if err != nil {
+		return nil, err
+	}
+	pb.FilePath = path
+	return pb, nil
 }
 
 func (pb *PngBuff) StringRead() (string, error) {
