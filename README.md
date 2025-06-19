@@ -24,12 +24,29 @@ Install:
 go get "github.com/GenesisAN/illusionsCard"
 ```
 
+Import:
+
+```go
+import(
+    icb "github.com/GenesisAN/illusionsCard/Base"
+    ic "github.com/GenesisAN/illusionsCard"
+)
+```
+
 Use:
 
 ```go
-Koikatsu , err := illusionsCard.ReadKK("./Card.png")
+pgb, err := ic.CardTypeRead("./Card.png")
 if err != nil {
-    return
+    fmt.Println(err)
+}
+switch pgb.Type {
+case icb.CT_KK:
+    kkinfo, err := ic.ReadKK(pgb)
+    fmt.Println(kkinfo, err)
+case icb.CT_KKS:
+    kksinfo, err := ic.ReadKK(pgb)
+    fmt.Println(kksinfo, err)
 }
 ```
 

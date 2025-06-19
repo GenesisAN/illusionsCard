@@ -1,4 +1,4 @@
-// Package KK 用于解析Koikatsu的角色卡数据
+// Package KKS Package KK 用于解析Koikatsu的角色卡数据
 package KKS
 
 import (
@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/GenesisAN/illusionsCard/Base"
-	util "github.com/GenesisAN/illusionsCard/util"
+	"github.com/GenesisAN/illusionsCard/util"
 	"sort"
 )
 
@@ -15,21 +15,18 @@ type KKSCard struct {
 	CharParmeter *KKSChaFileParameter
 }
 
-func (card *KKSCard) KKChaFileParameterEx(cfp *KKSChaFileParameter) {
-	card.CharParmeter = cfp
-	card.CharInfo = &Base.ChaFileParameterEx{}
-	card.CharInfo.Lastname = cfp.Lastname
-	card.CharInfo.Firstname = cfp.Firstname
-	card.CharInfo.Version = cfp.Version
-	card.CharInfo.Nickname = cfp.Nickname
+func (c *KKSCard) KKChaFileParameterEx(cfp *KKSChaFileParameter) {
+	c.CharParmeter = cfp
+	c.CharInfo = &Base.ChaFileParameterEx{}
+	c.CharInfo.Lastname = cfp.Lastname
+	c.CharInfo.Firstname = cfp.Firstname
+	c.CharInfo.Version = cfp.Version
+	c.CharInfo.Nickname = cfp.Nickname
+	c.CharInfo.Sex = cfp.Sex
 }
 
 func ParseKKSChara(pb *util.PngBuff) (KKSCard, error) {
-	if pb.Type != "" {
-
-	}
-
-	kc := KKSCard{&Base.Card{}, &KKSChaFileParameter{}}
+	kc := KKSCard{&Base.Card{CardType: pb.Type}, &KKSChaFileParameter{}}
 	Version, err := pb.StringRead()
 	if err != nil {
 		return kc, err
@@ -99,7 +96,10 @@ func ParseKKSChara(pb *util.PngBuff) (KKSCard, error) {
 	//根据KKEx位置信息，反序列化 得到 extDataO
 	var extDataO Base.MapSArrayInterface
 	if kkexok {
-		extDataO.UnmarshalMsg(kkex.Data)
+		_, err := extDataO.UnmarshalMsg(kkex.Data)
+		if err != nil {
+			return kc, errors.New("extDataO Unmarshal Fail")
+		}
 	}
 	//exDataO处理后的数据 exData
 	exData := make(map[string]*Base.PluginData)
@@ -129,9 +129,9 @@ func ParseKKSChara(pb *util.PngBuff) (KKSCard, error) {
 	return kc, nil
 }
 
-func (kc *KKSCard) PrintCardInfo() {
+func (c *KKSCard) PrintCardInfo() {
 	fmt.Println("Require Plugin:")
-	for _, ex := range kc.ExtendedList {
+	for _, ex := range c.ExtendedList {
 		fmt.Printf("[Plugin]%s(Ver:%d)\n", ex.Name, ex.Version)
 		ex.PrintMod()
 	}
