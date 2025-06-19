@@ -81,6 +81,18 @@ func (c *Card) CompareMissingMods(localGUIDs []string) map[string]ResolveInfo {
 	return missing
 }
 
+// 返回卡牌依赖的DLL信息
+func (c *Card) GetDLLDependencies() []string {
+	if c.ExtendedList == nil || len(c.ExtendedList) == 0 {
+		return nil
+	}
+	var dependencies []string
+	for i, _ := range c.ExtendedList {
+		dependencies = append(dependencies, i)
+	}
+	return dependencies
+}
+
 // 返回卡片的zipmod依赖信息
 func (c *Card) GetZipmodsDependencies() []string {
 	if c.ExtendedList == nil || len(c.ExtendedList) == 0 {
