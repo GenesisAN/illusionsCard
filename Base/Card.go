@@ -6,9 +6,9 @@ import (
 )
 
 type CardInterface interface {
+	CompareMissingZipMods(localGUIDs []string) []string
+	GetZipmodsDependencies() []string
 	GetPath() string
-	GetVersion() string
-	PrintCardInfo()
 }
 
 // Card is illusionCard Bset struct
@@ -51,6 +51,9 @@ func (c *Card) TypeInt() int {
 		return CTI_Unknown
 	}
 }
+func (k *Card) GetPath() string {
+	return k.Path
+}
 
 // CompareMissingMods 对比卡片所需的 zipmod 插件与本地 mods，返回缺失插件的 GUID 映射
 // CompareMissingMods compares the card's required zipmod GUIDs with local GUID list.
@@ -79,7 +82,7 @@ func (c *Card) CompareMissingMods(localGUIDs []string) map[string]ResolveInfo {
 }
 
 // 返回卡片的zipmod依赖信息
-func (c *Card) GetZipmodDependencies() []string {
+func (c *Card) GetZipmodsDependencies() []string {
 	if c.ExtendedList == nil || len(c.ExtendedList) == 0 {
 		return nil
 	}

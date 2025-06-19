@@ -12,22 +12,15 @@ type KKClothesCard struct {
 	*Base.Card
 }
 
-func (k *KKClothesCard) GetPath() string {
-	return k.Path
-}
-
-func (k *KKClothesCard) GetVersion() string {
-	return k.LoadVersion
-}
-
-func (kc *KKClothesCard) PrintCardInfo() {
-	fmt.Println("Require Plugin:")
-	for _, ex := range kc.ExtendedList {
-		fmt.Printf("[Plugin]%s(Ver:%d)\n", ex.Name, ex.Version)
-		ex.PrintMod()
+func (k *KKClothesCard) CompareMissingZipMods(localGUIDs []string) []string {
+	missing := []string{}
+	for _, guid := range localGUIDs {
+		if _, ok := k.Extended[guid]; !ok {
+			missing = append(missing, guid)
+		}
 	}
+	return missing
 }
-
 func ParesKKClothes(pb *util.PngBuff) (*KKClothesCard, error) {
 	kkc := KKClothesCard{&Base.Card{}}
 	Version, err := pb.StringRead()

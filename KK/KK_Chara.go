@@ -4,7 +4,6 @@ package KK
 import (
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"sort"
 
 	"github.com/GenesisAN/illusionsCard/Base"
@@ -17,23 +16,14 @@ type KKCharaCard struct {
 	CharParmeter *KKChaFileParameter
 }
 
-func (k *KKCharaCard) GetPath() string {
-	return k.Path
-}
-
-func (k *KKCharaCard) GetVersion() string {
-	if k.CharParmeter != nil {
-		return k.CharParmeter.Version
+func (k *KKCharaCard) CompareMissingZipMods(localGUIDs []string) []string {
+	missing := []string{}
+	for _, guid := range localGUIDs {
+		if _, ok := k.Extended[guid]; !ok {
+			missing = append(missing, guid)
+		}
 	}
-	return k.LoadVersion
-}
-
-func (k *KKCharaCard) PrintCardInfo() {
-	fmt.Println("Require Plugin:")
-	for _, ex := range k.ExtendedList {
-		fmt.Printf("[Plugin]%s(Ver:%d)\n", ex.Name, ex.Version)
-		ex.PrintMod()
-	}
+	return missing
 }
 
 type KKCharaReader struct{}

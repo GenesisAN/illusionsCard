@@ -16,15 +16,14 @@ type SunshineCharaCard struct {
 	CharParmeter *KKSChaFileParameter
 }
 
-func (c *SunshineCharaCard) GetPath() string {
-	return c.Path
-}
-
-func (c *SunshineCharaCard) GetVersion() string {
-	if c.CharParmeter != nil {
-		return c.CharParmeter.Version
+func (k *SunshineCharaCard) CompareMissingZipMods(localGUIDs []string) []string {
+	missing := []string{}
+	for _, guid := range localGUIDs {
+		if _, ok := k.Extended[guid]; !ok {
+			missing = append(missing, guid)
+		}
 	}
-	return c.LoadVersion
+	return missing
 }
 
 func (c *SunshineCharaCard) KKSChaFileParameterEx(cfp *KKSChaFileParameter) {
