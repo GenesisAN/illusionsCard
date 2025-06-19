@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"github.com/GenesisAN/illusionsCard/Base"
 	"os"
 	"strings"
+
+	"github.com/GenesisAN/illusionsCard/Base"
 )
 
 type PngBuff struct {
@@ -87,4 +88,12 @@ func (pb *PngBuff) UInt32Read() (uint32, error) {
 		return 0, errors.New("UInt32Read fail:unknown Int32 len")
 	}
 	return binary.LittleEndian.Uint32(types), nil
+}
+
+func (pb *PngBuff) Int32Read() (int32, error) {
+	types, err := pb.BuffRead(4, "Int32Read fail:unknown Int32 len")
+	if err != nil {
+		return 0, errors.New("Int32Read fail:unknown Int32 len")
+	}
+	return int32(binary.LittleEndian.Uint32(types)), nil
 }

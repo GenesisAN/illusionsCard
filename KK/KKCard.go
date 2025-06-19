@@ -5,9 +5,10 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"sort"
+
 	"github.com/GenesisAN/illusionsCard/Base"
 	util "github.com/GenesisAN/illusionsCard/util"
-	"sort"
 )
 
 type KKCard struct {
@@ -22,6 +23,74 @@ func (card *KKCard) KKChaFileParameterEx(cfp *KKChaFileParameter) {
 	card.CharInfo.Firstname = cfp.Firstname
 	card.CharInfo.Version = cfp.Version
 	card.CharInfo.Nickname = cfp.Nickname
+}
+
+func ParesKKClothes(pb *util.PngBuff) (*KKCard, error) {
+	kkc := KKCard{&Base.Card{}, &KKChaFileParameter{}}
+	Version, err := pb.StringRead()
+	if err != nil {
+		return &kkc, err
+	}
+	kkc.LoadVersion = Version
+	coordinateName, err := pb.StringRead() // 读取坐标名称
+	if err != nil {
+		return &kkc, err
+	}
+	fmt.Println("Coordinate Name:", coordinateName)
+	//kkc.CharInfo.Nickname = coordinateName
+	num, err := pb.Int32Read()
+	//load clothes and accs from the bytes array
+
+	pb.BuffRead(int(num), "BuffRead Fail:Card BlockHeader")
+
+	marker, err := pb.StringRead() //name
+	if err != nil {
+		return &kkc, err
+	}
+	Version, err = pb.StringRead() //version
+	if err != nil {
+		return &kkc, err
+	}
+	len, err := pb.Int32Read()
+	if err != nil {
+		return &kkc, err
+	}
+	if marker != "KKEx" {
+		return &kkc, errors.New("marker not found: " + marker)
+	}
+	if len <= 0 {
+		return &kkc, errors.New("KKEx length is zero")
+	}
+
+	var extDataO Base.MapSArrayInterface
+	extDataBuf, err := pb.BuffRead(int(len), "BuffRead Fail:KKEx data")
+	if err != nil {
+		return &kkc, err
+	}
+	extDataO.UnmarshalMsg(extDataBuf)
+	//exDataO处理后的数据 exData
+	exData := make(map[string]*Base.PluginData)
+	for S, v := range extDataO {
+		if v != nil {
+			//取出PluginData
+			var pd Base.PluginData
+			pd.Version = int(v[0].(int64))
+			pd.Data = v[1]
+			exData[S] = &pd
+		}
+	}
+	// 遍历exData提取RequiredZipmodGUIDs
+	exDataEx := make(map[string]*Base.PluginDataEx)
+	for s, data := range exData {
+		// 根据GUID找出插件对应的Data
+		dex := data.DeserializeObjects()
+		dex.Name = s
+		dex.Version = data.Version
+		exDataEx[dex.Name] = &dex
+	}
+	kkc.Extended = exData
+
+	return &kkc, nil
 }
 
 func ParseKKChara(pb *util.PngBuff) (KKCard, error) {

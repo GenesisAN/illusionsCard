@@ -2,6 +2,7 @@ package illusionCard
 
 import (
 	"errors"
+
 	"github.com/GenesisAN/illusionsCard/Base"
 	"github.com/GenesisAN/illusionsCard/KK"
 	"github.com/GenesisAN/illusionsCard/KKS"
@@ -10,6 +11,18 @@ import (
 
 func CardTypeRead(path string) (*util.PngBuff, error) {
 	return util.PngRead(path)
+}
+
+func ReadKKClothes(pgb *util.PngBuff) (*KK.KKCard, error) {
+	if pgb.Type != Base.CT_KKC {
+		return nil, errors.New("type error:" + pgb.Type)
+	}
+	card, err := KK.ParesKKClothes(pgb)
+	if err != nil {
+		return nil, err
+	}
+	card.Path = pgb.FilePath
+	return card, nil
 }
 
 // ReadKK 读取KK的卡片,传入卡7片路径

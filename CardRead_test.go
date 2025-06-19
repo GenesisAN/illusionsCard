@@ -4,31 +4,53 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
+
+	"github.com/GenesisAN/illusionsCard/Base"
 )
 
 // KK测试用例，需在根目录创建KKTest文件夹，并在里面放置卡片文件
 func TestReadKK(t *testing.T) {
 	files := GetAllFiles("./KKTest/", ".png")
 	for _, v := range files {
+		bT := time.Now()
 		gtp, err := CardTypeRead(v)
-		kk, err := ReadKK(gtp)
 		if err != nil {
 			t.Error(err)
 		}
-		println(kk.CharParmeter.Nickname)
+		switch gtp.Type {
+		case Base.CT_KK:
+			kk, err := ReadKK(gtp)
+			if err != nil {
+				t.Error(err)
+			}
+			eT := time.Since(bT)
+			println(kk.CharParmeter.Nickname, eT.String())
+		case Base.CT_KKC:
+			kkc, err := ReadKKClothes(gtp)
+			if err != nil {
+				t.Error(err)
+			}
+			eT := time.Since(bT)
+			println(kkc.CharParmeter.Nickname, eT.String())
+		}
+
 	}
 }
 
 // KKS测试用例，需在根目录创建KKTest文件夹，并在里面放置卡片文件
 func TestReadKKS(t *testing.T) {
+
 	files := GetAllFiles("./KKSTest/", ".png")
 	for _, v := range files {
+		bT := time.Now()
 		gtp, err := CardTypeRead(v)
 		kks, err := ReadKKS(gtp)
 		if err != nil {
 			t.Error(err)
 		}
-		println(kks.CharParmeter.Nickname)
+		eT := time.Since(bT)
+		println(kks.CharParmeter.Nickname, eT.String())
 	}
 
 }
