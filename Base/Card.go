@@ -9,6 +9,7 @@ type CardInterface interface {
 	CompareMissingZipMods(localGUIDs []string) []string
 	GetZipmodsDependencies() []string
 	GetPath() string
+	GetDLLDependencies() []string
 }
 
 // Card is illusionCard Bset struct
