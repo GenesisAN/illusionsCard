@@ -4,12 +4,7 @@ import (
 	"github.com/GenesisAN/illusionsCard/Base"
 	"github.com/GenesisAN/illusionsCard/KK"
 	"github.com/GenesisAN/illusionsCard/KKS"
-	"github.com/GenesisAN/illusionsCard/util"
 )
-
-type CardReader interface {
-	Read(*util.PngBuff) (Base.CardInterface, error)
-}
 
 var cardReaderMap = map[string]CardReader{
 	Base.CT_KK:  KK.KKCharaReader{},

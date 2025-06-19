@@ -28,9 +28,9 @@ func (k *KKCharaCard) GetVersion() string {
 	return k.LoadVersion
 }
 
-func (kc *KKCharaCard) PrintCardInfo() {
+func (k *KKCharaCard) PrintCardInfo() {
 	fmt.Println("Require Plugin:")
-	for _, ex := range kc.ExtendedList {
+	for _, ex := range k.ExtendedList {
 		fmt.Printf("[Plugin]%s(Ver:%d)\n", ex.Name, ex.Version)
 		ex.PrintMod()
 	}
