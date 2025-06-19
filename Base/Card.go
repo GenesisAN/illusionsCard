@@ -1,6 +1,15 @@
 package Base
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type CardInterface interface {
+	GetPath() string
+	GetVersion() string
+	PrintCardInfo()
+}
 
 // Card is illusionCard Bset struct
 type Card struct {
@@ -12,6 +21,7 @@ type Card struct {
 	CardType     string                   `json:"card_type"`
 	LoadVersion  string                   `json:"load_version"`
 	Path         string                   `json:"path"`
+	MD5          string                   `json:"md5"`
 }
 
 type ChaFileParameterEx struct {
@@ -39,6 +49,31 @@ func (c *Card) TypeInt() int {
 		return CTI_KoikatsuSunshine
 	default:
 		return CTI_Unknown
+	}
+}
+
+// Card打印zipmode信息
+func (c *Card) PrintZipmodeInfo() {
+	if c.ExtendedList == nil || len(c.ExtendedList) == 0 {
+		return
+	}
+
+	printedGUIDs := make(map[string]bool)
+
+	for _, pluginDataEx := range c.ExtendedList {
+		if pluginDataEx.RequiredZipmodGUIDs == nil || len(pluginDataEx.RequiredZipmodGUIDs) == 0 {
+			continue
+		}
+
+		for i, mod := range pluginDataEx.RequiredZipmodGUIDs {
+			if _, exists := printedGUIDs[mod.GUID]; exists {
+				continue // 已打印，跳过
+			}
+			printedGUIDs[mod.GUID] = true // 标记为已打印
+
+			fmt.Printf("  *[mod依赖 %d]: %s (%s | LS: %d | CN: %d)\n",
+				i, mod.GUID, mod.Property, mod.LocalSlot, mod.CategoryNo)
+		}
 	}
 }
 

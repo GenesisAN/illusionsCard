@@ -5,17 +5,29 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"sort"
+
 	"github.com/GenesisAN/illusionsCard/Base"
 	"github.com/GenesisAN/illusionsCard/util"
-	"sort"
 )
 
-type KKSCard struct {
+type SunshineCharaCard struct {
 	*Base.Card
 	CharParmeter *KKSChaFileParameter
 }
 
-func (c *KKSCard) KKChaFileParameterEx(cfp *KKSChaFileParameter) {
+func (c *SunshineCharaCard) GetPath() string {
+	return c.Path
+}
+
+func (c *SunshineCharaCard) GetVersion() string {
+	if c.CharParmeter != nil {
+		return c.CharParmeter.Version
+	}
+	return c.LoadVersion
+}
+
+func (c *SunshineCharaCard) KKSChaFileParameterEx(cfp *KKSChaFileParameter) {
 	c.CharParmeter = cfp
 	c.CharInfo = &Base.ChaFileParameterEx{}
 	c.CharInfo.Lastname = cfp.Lastname
@@ -25,8 +37,22 @@ func (c *KKSCard) KKChaFileParameterEx(cfp *KKSChaFileParameter) {
 	c.CharInfo.Sex = cfp.Sex
 }
 
-func ParseKKSChara(pb *util.PngBuff) (KKSCard, error) {
-	kc := KKSCard{&Base.Card{CardType: pb.Type}, &KKSChaFileParameter{}}
+type SunshineCharaReader struct{}
+
+func (r SunshineCharaReader) Read(pgb *util.PngBuff) (Base.CardInterface, error) {
+	if pgb.Type != Base.CT_KKS {
+		return nil, errors.New("invalid card type for SunshineCharaReader: " + pgb.Type)
+	}
+	card, err := ParseKKSChara(pgb)
+	if err != nil {
+		return nil, err
+	}
+	card.Path = pgb.FilePath
+	return &card, nil
+}
+
+func ParseKKSChara(pb *util.PngBuff) (SunshineCharaCard, error) {
+	kc := SunshineCharaCard{&Base.Card{CardType: pb.Type}, &KKSChaFileParameter{}}
 	Version, err := pb.StringRead()
 	if err != nil {
 		return kc, err
@@ -91,7 +117,7 @@ func ParseKKSChara(pb *util.PngBuff) (KKSCard, error) {
 	if err != nil {
 		return kc, errors.New("KKSChaFileParameter Unmarshal Fail")
 	}
-	kc.KKChaFileParameterEx(&Cfp)
+	kc.KKSChaFileParameterEx(&Cfp)
 	kkex, kkexok := bhmap["KKEx"]
 	//根据KKEx位置信息，反序列化 得到 extDataO
 	var extDataO Base.MapSArrayInterface
@@ -101,35 +127,15 @@ func ParseKKSChara(pb *util.PngBuff) (KKSCard, error) {
 			return kc, errors.New("extDataO Unmarshal Fail")
 		}
 	}
-	//exDataO处理后的数据 exData
-	exData := make(map[string]*Base.PluginData)
+	exData, exDataEx := Base.ParsePluginData(extDataO)
 	kc.Extended = exData
-	//exData原始数据
-	for S, v := range extDataO {
-		if v != nil {
-			//取出PluginData
-			var pd Base.PluginData
-			pd.Version = int(v[0].(int64))
-			pd.Data = v[1]
-			exData[S] = &pd
-		}
-	}
-	// 遍历exData提取RequiredZipmodGUIDs
-	exDataEx := make(map[string]*Base.PluginDataEx)
-	for s, data := range exData {
-		// 根据GUID找出插件对应的Data
-		dex := data.DeserializeObjects()
-		dex.Name = s
-		dex.Version = data.Version
-		exDataEx[dex.Name] = &dex
-	}
 	kc.ExtendedList = exDataEx
 	kc.Image1 = pb.Png1
 	kc.Image2 = pb.Png2
 	return kc, nil
 }
 
-func (c *KKSCard) PrintCardInfo() {
+func (c *SunshineCharaCard) PrintCardInfo() {
 	fmt.Println("Require Plugin:")
 	for _, ex := range c.ExtendedList {
 		fmt.Printf("[Plugin]%s(Ver:%d)\n", ex.Name, ex.Version)

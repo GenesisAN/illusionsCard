@@ -15,18 +15,18 @@ func TestReadKK(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		kk, err := ReadKK(gtp)
+		kk, err := ReadKKClothes(gtp)
 		if err != nil {
 			t.Error(err)
 		}
-
-		println(kk.CharParmeter.Nickname)
+		println(kk.Path)
+		//println(kk.CharParmeter.Nickname)
 	}
 }
 
 // KKS测试用例，需在根目录创建KKTest文件夹，并在里面放置卡片文件
 func TestReadKKS(t *testing.T) {
-	files := GetAllFiles("./KKTest/", ".png")
+	files := GetAllFiles("./KKSTest/", ".png")
 	for _, v := range files {
 		//bT := time.Now()
 		gtp, err := CardTypeRead(v)

@@ -13,7 +13,8 @@ func CardTypeRead(path string) (*util.PngBuff, error) {
 	return util.PngRead(path)
 }
 
-func ReadKKClothes(pgb *util.PngBuff) (*KK.KKCard, error) {
+// Deprecated: 请使用 ReadCardFromPath 替代。该函数将在未来版本中移除。 ReadKK 读取KK的服装卡片,传入卡片路径
+func ReadKKClothes(pgb *util.PngBuff) (*KK.KKClothesCard, error) {
 	if pgb.Type != Base.CT_KKC {
 		return nil, errors.New("type error:" + pgb.Type)
 	}
@@ -25,8 +26,8 @@ func ReadKKClothes(pgb *util.PngBuff) (*KK.KKCard, error) {
 	return card, nil
 }
 
-// ReadKK 读取KK的卡片,传入卡7片路径
-func ReadKK(pgb *util.PngBuff) (*KK.KKCard, error) {
+// Deprecated: 请使用 ReadCardFromPath 替代。该函数将在未来版本中移除。 ReadKK 读取KK的卡片,传入卡片路径
+func ReadKK(pgb *util.PngBuff) (*KK.KKCharaCard, error) {
 	if pgb.Type != Base.CT_KK {
 		return nil, errors.New("type error:" + pgb.Type)
 	}
@@ -36,10 +37,10 @@ func ReadKK(pgb *util.PngBuff) (*KK.KKCard, error) {
 	}
 	card.Path = pgb.FilePath
 	return &card, nil
-	//版本号
 }
 
-func ReadKKS(pgb *util.PngBuff) (*KKS.KKSCard, error) {
+// Deprecated: 请使用 ReadCardFromPath 替代。	该函数将在未来版本中移除。
+func ReadKKS(pgb *util.PngBuff) (*KKS.SunshineCharaCard, error) {
 	if pgb.Type != Base.CT_KKS {
 		return nil, errors.New("type error:" + pgb.Type)
 	}
