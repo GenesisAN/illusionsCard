@@ -29,7 +29,7 @@ func (k *KKCharaCard) CompareMissingZipMods(localGUIDs []string) []string {
 type KKCharaReader struct{}
 
 func (r KKCharaReader) Read(pgb *util.PngBuff) (Base.CardInterface, error) {
-	if pgb.Type != Base.CT_KK {
+	if pgb.Type != Base.CT_KK && pgb.Type != Base.CT_KKCSP {
 		return nil, errors.New("KKReader: invalid type " + pgb.Type)
 	}
 	card, err := ParseKKChara(pgb)
