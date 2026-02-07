@@ -2,6 +2,7 @@ package illusionCard
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -48,4 +49,18 @@ func TestReadAllCards(t *testing.T) {
 			})
 		}
 	}
+}
+func GetAllFiles(root, ext string) []string {
+	var files []string
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if filepath.Ext(path) != ext {
+			return nil
+		}
+		files = append(files, path)
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+	return files
 }
