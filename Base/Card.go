@@ -48,6 +48,8 @@ func (c *Card) TypeInt() int {
 		return CTI_AiSyoujyo
 	case CT_KKS:
 		return CTI_KoikatsuSunshine
+	case CT_KKSC:
+		return CTI_KoiKatuScene
 	default:
 		return CTI_Unknown
 	}

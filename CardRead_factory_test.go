@@ -40,6 +40,9 @@ func TestReadAllCards(t *testing.T) {
 				case *KKS.SunshineCharaCard:
 					fmt.Println("→ KKS角色卡:", c.CharParmeter.Nickname)
 					c.PrintZipmodeInfo()
+				case *KK.KKSceneCard:
+					fmt.Println("→ KK场景卡:", c.Path)
+					c.PrintZipmodeInfo()
 
 				default:
 					t.Errorf("未知卡片类型: %T", card)

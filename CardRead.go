@@ -39,6 +39,18 @@ func ReadKK(pgb *util.PngBuff) (*KK.KKCharaCard, error) {
 	return &card, nil
 }
 
+// ReadKKScene reads a Koikatsu Studio scene card. New code can also use the
+// generic ReadCardFromPath factory and assert the result to *KK.KKSceneCard.
+func ReadKKScene(pgb *util.PngBuff) (*KK.KKSceneCard, error) {
+	if pgb == nil {
+		return nil, errors.New("nil PNG buffer")
+	}
+	if pgb.Type != Base.CT_KKSC {
+		return nil, errors.New("type error:" + pgb.Type)
+	}
+	return KK.ParseKKSceneCard(pgb)
+}
+
 // Deprecated: 请使用 ReadCardFromPath 替代。	该函数将在未来版本中移除。
 func ReadKKS(pgb *util.PngBuff) (*KKS.SunshineCharaCard, error) {
 	if pgb.Type != Base.CT_KKS {

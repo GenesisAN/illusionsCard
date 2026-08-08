@@ -23,6 +23,7 @@ const (
 	CT_KKP   = "【KoiKatuCharaS】"   // KoikatsuParty
 	CT_KKCSP = "【KoiKatuCharaSP】"  // KoikatsuPartySpecialPatch
 	CT_KKC   = "【KoiKatuClothes】"  // KoiKatuClothes
+	CT_KKSC  = "Scene"             // KoiKatuScene
 )
 
 const (

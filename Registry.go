@@ -11,6 +11,7 @@ var cardReaderMap = map[string]CardReader{
 	Base.CT_KKCSP: KK.KKCharaReader{},        // KK服装卡
 	Base.CT_KKS:   KKS.SunshineCharaReader{}, // 你自己定义
 	Base.CT_KKC:   KK.KKClothesReader{},      // 你自己定义
+	Base.CT_KKSC:  KK.KKSceneReader{},
 }
 
 // GetCardReaderMap returns the cardReaderMap.

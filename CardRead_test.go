@@ -4,23 +4,28 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/GenesisAN/illusionsCard/Base"
 )
 
 // KK测试用例，需在根目录创建KKTest文件夹，并在里面放置卡片文件
 func TestReadKK(t *testing.T) {
 	files := GetAllFiles("./KKTest/", ".png")
 	for _, v := range files {
-		//bT := time.Now()
 		gtp, err := CardTypeRead(v)
 		if err != nil {
 			t.Error(err)
+			continue
+		}
+		if gtp.Type != Base.CT_KKC {
+			continue
 		}
 		kk, err := ReadKKClothes(gtp)
 		if err != nil {
 			t.Error(err)
+			continue
 		}
 		println(kk.Path)
-		//println(kk.CharParmeter.Nickname)
 	}
 }
 

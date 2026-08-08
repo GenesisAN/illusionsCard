@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
+	"io"
 	"os"
 	"strings"
 
@@ -30,30 +32,41 @@ func (pb *PngBuff) BuffRead(n int, errMsg string) ([]byte, error) {
 }
 func PngBytesRead(f []byte) (*PngBuff, error) {
 	var pb PngBuff
-	pb.B = bytes.NewBuffer(f)
-	//value := get_png(f)
-	//切割图片
-	pngend := bytes.Index(f, Base.PngEndChunk) + len(Base.PngEndChunk)
-	if pngend == -1 {
+	pngEndIndex := bytes.Index(f, Base.PngEndChunk)
+	if pngEndIndex < 0 {
 		return nil, errors.New("PngRead fail:not found PngEndChunk")
 	}
-	png := pb.B.Next(pngend)
+	pngEnd := pngEndIndex + len(Base.PngEndChunk)
+	png := f[:pngEnd]
 	pb.Png1 = &png
-	//os.WriteFile("Out.png", outpng, 0776)
+	payload := f[pngEnd:]
+	if len(payload) == 0 {
+		return nil, errors.New("PngRead fail:card data not found")
+	}
+
+	pb.B = bytes.NewBuffer(payload)
 	fb, err := pb.B.ReadByte()
 	if err != nil {
 		return nil, errors.New("PngRead fail:first byte not found")
 	}
 	if fb == 0x7 {
-		_, err = pb.BuffRead(64, "PngRead fail:0x7 BuffRead fail")
-		if err != nil {
-			return nil, err
-		}
+		pb.B = bytes.NewBuffer(payload)
+		pb.Type = Base.CT_KKSC
+		return &pb, nil
 	} else if fb == 0x64 {
 		_, err = pb.BuffRead(3, "PngRead fail:0x64 BuffRead fail")
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		pb.B = bytes.NewBuffer(payload)
+		version, versionErr := pb.StringRead()
+		if versionErr != nil || !looksLikeVersion(version) {
+			return nil, errors.New("PngRead fail:unknown card prefix")
+		}
+		pb.B = bytes.NewBuffer(payload)
+		pb.Type = Base.CT_KKSC
+		return &pb, nil
 	}
 	pb.Type, err = pb.StringRead()
 	if err != nil {
@@ -79,17 +92,54 @@ func PngRead(path string) (*PngBuff, error) {
 }
 
 func (pb *PngBuff) StringRead() (string, error) {
-	// Buffer中读取string的长度但这并非C#标准实现,具体参考: https://github.com/dotnet/runtime/blob/8a46f0777ef975bb3d39cfb0b477c8e5c2d02b9a/src/libraries/System.Private.CoreLib/src/System/IO/BinaryReader.cs#L544
-	types, err := pb.B.ReadByte()
+	length, err := read7BitEncodedInt(pb.B)
 	if err != nil {
-		return "", errors.New("StringRead fail:unknown string len")
+		return "", fmt.Errorf("StringRead fail: %w", err)
 	}
-	cardtypebyte, err := pb.BuffRead(int(types), "StringRead fail")
+	cardtypebyte, err := pb.BuffRead(length, "StringRead fail: truncated string")
 	if err != nil {
 		return "", err
 	}
 	return string(cardtypebyte), nil
 }
+
+// read7BitEncodedInt implements the length prefix used by .NET BinaryReader.
+func read7BitEncodedInt(r io.ByteReader) (int, error) {
+	var result uint32
+	for shift := uint(0); shift < 35; shift += 7 {
+		b, err := r.ReadByte()
+		if err != nil {
+			return 0, err
+		}
+		if shift == 28 && b > 0x0f {
+			return 0, errors.New("invalid 7-bit encoded integer")
+		}
+		result |= uint32(b&0x7f) << shift
+		if b&0x80 == 0 {
+			return int(result), nil
+		}
+	}
+	return 0, errors.New("invalid 7-bit encoded integer")
+}
+
+func looksLikeVersion(value string) bool {
+	parts := strings.Split(value, ".")
+	if len(parts) < 2 {
+		return false
+	}
+	for _, part := range parts {
+		if part == "" {
+			return false
+		}
+		for _, char := range part {
+			if char < '0' || char > '9' {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func (pb *PngBuff) UInt32Read() (uint32, error) {
 	types, err := pb.BuffRead(4, "UInt32Read fail:unknown Int32 len")
 	if err != nil {
