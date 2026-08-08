@@ -37,16 +37,29 @@ func (pde *PluginDataEx) PrintMod() {
 func (data *PluginData) DeserializeObjects() PluginDataEx {
 	var pluginDataEx PluginDataEx
 	var resolveInfos []ResolveInfo
-	ds := data.Data.(map[string]interface{})
+	if data == nil || data.Data == nil {
+		return pluginDataEx
+	}
+	ds, ok := data.Data.(map[string]interface{})
+	if !ok || ds == nil {
+		return pluginDataEx
+	}
 	//提取 data中的info信息
 	for s2, i := range ds {
 		if s2 == "info" {
-			bts := i.([]interface{})
+			bts, ok := i.([]interface{})
+			if !ok || bts == nil {
+				continue
+			}
 			//将info内的[]byte数组，反序列化为ResolveInfo
 			for _, bt := range bts {
+				raw, ok := bt.([]byte)
+				if !ok || raw == nil {
+					continue
+				}
 				var ri ResolveInfo
 				//从中提取ResolveInfo
-				ri.UnmarshalMsg(bt.([]byte))
+				ri.UnmarshalMsg(raw)
 				//将提取的ResolveInfo放入pluginDataEx
 				resolveInfos = append(resolveInfos, ri)
 				pluginDataEx.RequiredZipmodGUIDs = append(pluginDataEx.RequiredZipmodGUIDs, ri)

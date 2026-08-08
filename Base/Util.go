@@ -5,9 +5,11 @@ func ParsePluginData(raw MapSArrayInterface) (map[string]*PluginData, map[string
 	exDataEx := make(map[string]*PluginDataEx)
 
 	for S, v := range raw {
-		if v != nil {
+		if v != nil && len(v) >= 2 {
 			var pd PluginData
-			pd.Version = int(v[0].(int64))
+			if ver, ok := v[0].(int64); ok {
+				pd.Version = int(ver)
+			}
 			pd.Data = v[1]
 			exData[S] = &pd
 
